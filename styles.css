@@ -29,13 +29,48 @@ body {
     top: 100px;
     position: absolute;
     background-color: black;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
 }
 
 .player-paddle {
     left: 0;
+    border-right: 10px solid #f00;
 }
 
 .computer-paddle {
     right: 0;
+    border-left: 10px solid blue;
 }
+
+.player_1_score {
+    height: 50px;
+    width: 50px;
+    color: chartreuse;
+    position: absolute;
+    left: 25%;
+    margin-top: 30px;
+    
+}
+
+.player_2_score {
+    height: 50px;
+    width: 50px;
+    color: chartreuse;
+    position: absolute;
+    left: 75%;
+    margin-top: 30px;
+    
+}
+
+
+.net{
+    position: relative;
+    background-color: white;
+    width: 2px;
+    height: 500px;
+    margin: 0 auto;
+}
+
 
