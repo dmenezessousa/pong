@@ -1,6 +1,50 @@
+//Get game Elements =============================================
+
+// Get the game area element
+let gameArea = document.querySelector('.game-area');
+// Get the player paddle element
+let playerPaddle = document.querySelector('.player-paddle');
+// Get the computer paddle element
+let computerPaddle = document.querySelector('.computer-paddle');
+let playerScore = document.querySelector('.player_1_score');
+let computerScore = document.querySelector('.player_2_score');
+let ball = document.querySelector('.ball');
+//get scores elements
+let scorePlayer = document.querySelector('.player_1_score');
+let scoreComputer = document.querySelector('.player_2_score');
+
+//list of extra variables =======================================================================
+
+//X,Y positions and velocities .
+
+let ballXPosition = 350;
+let ballYPosition = 100;
+let ballXVelocity = 1;
+let ballYVelocity = 1;
+
+let playerPaddleYPosition = 0;
+let playerPaddleYVelocity = 1;
+
+let computerPaddleYPosition = 400;
+let computerPaddleYVelocity = 3.15;
+//Game Elements Modification ====================================================================
+
 // Size of the game area (in px)
 const GAME_AREA_WIDTH = 700;
 const GAME_AREA_HEIGHT = 500;
+
+//Game Background Color 
+gameArea.style.backgroundColor = 'black';
+
+//Paddles color
+playerPaddle.style.backgroundColor = 'white';
+computerPaddle.style.backgroundColor = 'white';
+
+//Ball color
+ball.style.backgroundColor = 'White';
+
+//ball shape
+ball.style.borderRadius = '10px';
 
 // Size of the paddles (in px)
 const PADDLE_HEIGHT = 100;
@@ -9,22 +53,114 @@ const PADDLE_WIDTH = 20;
 // Size of the ball (in px)
 const BALL_SIZE = 20;
 
-// Get the computer paddle element
-const computerPaddle = document.querySelector('.computer-paddle');
+//Event listeners ===============================================================================
+let playerPaddleCoord = playerPaddle.getBoundingClientRect();
+let computerPaddleCoord = computerPaddle.getBoundingClientRect();
 
-// The y-velocity of the computer paddle
-let computerPaddleYPosition = 0;
-let computerPaddleYVelocity = 1;
+document.addEventListener('keydown', (e) => {
+  if (e.code == 'KeyW'){
+    if(playerPaddleYPosition >= 10){
+      playerPaddleYPosition -= 10;
+    }
+  }else if (e.code == 'KeyS'){
+    if((playerPaddleYPosition + PADDLE_HEIGHT) <= GAME_AREA_HEIGHT){
+      playerPaddleYPosition += 10;
+    }
+  }  
 
-// Update the pong world
-function update() {
 
+  if((playerPaddleYPosition + PADDLE_HEIGHT) > GAME_AREA_HEIGHT || playerPaddleYPosition < 0 ){
+  }else{
+    playerPaddle.style.top = `${playerPaddleYPosition}px`;
+  }
+  playerPaddleCoord = playerPaddle.getBoundingClientRect();
+});
+
+//ball movements ==============================================================================
+//Function to move and bounce ball around.
+let ballCoord = ball.getBoundingClientRect();
+
+function moveBall() {
+
+  ballXPosition += ballXVelocity;
+  ball.style.left = `${ballXPosition}px`;
+
+  ballYPosition += ballYVelocity;
+  ball.style.top = `${ballYPosition}px`;
+
+  ballCoord = ball.getBoundingClientRect();
+
+  if((ballXPosition + BALL_SIZE)  > GAME_AREA_WIDTH){
+    playerScore.innerHTML  =  + playerScore.innerHTML + 1;
+    resetBallPosition();
+  }else if(ballXPosition  < 0){
+    computerScore.innerHTML  =  + computerScore.innerHTML + 1;
+    resetBallPosition();
+  }
+  if((ballYPosition + BALL_SIZE) > GAME_AREA_HEIGHT || ballYPosition  < 0){
+    ballYVelocity *= -1;
+  }
+  
+  //When the ball hits the player paddle
+  if(ballCoord.left <= playerPaddleCoord.right &&
+    ballCoord.top >= playerPaddleCoord.top &&
+    ballCoord.bottom <= playerPaddleCoord.bottom){
+      ballXVelocity *= -1;
+      ballXVelocity += 0.5;
+    }
+
+  // When the ball hits the computer paddle
+  if(ballCoord.right >= computerPaddleCoord.left &&
+    ballCoord.top >= computerPaddleCoord.top &&
+    ballCoord.bottom <= computerPaddleCoord.bottom){
+      ballXVelocity *= -1;
+      ballXVelocity -= 0.5;
+    }
+
+  
+}
+//call the moveBall function every 10ms
+setInterval(moveBall, 10);
+
+function resetBallPosition(){
+  ballXPosition = 350;
+  ballYPosition = 100;
+  ballXVelocity = 1;
+  ballYVelocity = 1;
+
+  computerPaddleYPosition = 400;
+  computerPaddleYVelocity = 3.15;
+}
+
+//player Paddle movements ======================================================================
+
+//Computer Paddle movements ====================================================================
+
+function comPaddle() {
     // Update the computer paddle's position
-    computerPaddleYPosition = computerPaddleYPosition + computerPaddleYVelocity;
+    if(ballYPosition > (computerPaddleYPosition + (PADDLE_HEIGHT /2))){
+      if((computerPaddleYPosition + PADDLE_HEIGHT) <= GAME_AREA_HEIGHT){
+        computerPaddleYPosition += computerPaddleYVelocity;
+      }
+    }else if(ballYPosition < (computerPaddleYPosition + (PADDLE_HEIGHT /2))){
+      if(computerPaddleYPosition >= 0){
+        computerPaddleYPosition -= computerPaddleYVelocity;
+      }
+    }
 
     // Apply the y-position 
     computerPaddle.style.top = `${computerPaddleYPosition}px`;
+
+    computerPaddleCoord = computerPaddle.getBoundingClientRect();
+
 }
 
 // Call the update() function every 35ms
-setInterval(update, 35);
+setInterval(comPaddle,35);
+
+
+
+
+
+
+
